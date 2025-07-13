@@ -33,17 +33,47 @@ module.exports.showListing = async (req, res) => {
     res.render("listings/show.ejs", { listing, currUser: req.user });
 };
 
-module.exports.createListing = async (req, res) => {
-    let Url = req.file.path;
-    let filename = req.file.filename;
+// module.exports.createListing = async (req, res) => {
+//     let Url = req.file.path;
+//     let filename = req.file.filename;
    
+//     const newListing = new Listing(req.body.listing);
+//     newListing.owner = req.user._id;
+//     newListing.image = { url: Url, filename: filename };
+//     await newListing.save();
+//     req.flash("success", "Successfully created a new listing!");
+//     res.redirect("/listings");
+// };
+
+
+module.exports.createListing = async (req, res) => {
+  try {
+    console.log("🔥 createListing reached");
+    console.log("📦 req.body:", req.body);
+    console.log("📸 req.file:", req.file);
+
     const newListing = new Listing(req.body.listing);
     newListing.owner = req.user._id;
-    newListing.image = { url: Url, filename: filename };
+
+    // Only set image if file is uploaded
+    if (req.file) {
+      let Url = req.file.path;
+      let filename = req.file.filename;
+      newListing.image = { url: Url, filename: filename };
+    }
+
     await newListing.save();
     req.flash("success", "Successfully created a new listing!");
     res.redirect("/listings");
+
+  } catch (err) {
+    console.log("❌ Error in createListing:", err);
+    res.status(500).send("Something went wrong!");
+  }
 };
+
+
+
 
 module.exports.renderEditForm = async (req, res) => {
     const listing = await Listing.findById(req.params.id);
