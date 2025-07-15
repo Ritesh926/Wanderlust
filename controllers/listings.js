@@ -24,11 +24,7 @@ module.exports.showListing = async (req, res) => {
         return res.redirect("/listings");
     }
 
-      // ✅ Add this check here before rendering the page
-  if (!listing.latitude || !listing.longitude) {
-    listing.latitude = 30.7046; // Chandigarh default
-    listing.longitude = 76.7179;
-  }
+    
 
     res.render("listings/show.ejs", { listing, currUser: req.user });
 };
