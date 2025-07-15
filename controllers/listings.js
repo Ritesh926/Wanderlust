@@ -42,22 +42,43 @@ module.exports.showListing = async (req, res) => {
 // };
 
 
+// module.exports.createListing = async (req, res, next) => {
+//     const newListing = new Listing(req.body.listing);
+//     newListing.owner = req.user._id;
+
+//     // ✅ Only assign image if file is uploaded
+//     if (req.file) {
+//         newListing.image = {
+//             url: req.file.path,
+//             filename: req.file.filename
+//         };
+//     }
+
+//     await newListing.save();
+//     req.flash("success", "New Listing Created!");
+//     res.redirect("/listings");
+// };
+
 module.exports.createListing = async (req, res, next) => {
+    console.log("Body:", req.body);
+    console.log("File:", req.file);  // 👈 Important
+
+    // let url = req.file?.path;
+    // let filename = req.file?.filename;
+
+    if (!url || !filename) {
+        throw new ExpressError("Image upload failed!", 400);
+    }
+
     const newListing = new Listing(req.body.listing);
     newListing.owner = req.user._id;
-
-    // ✅ Only assign image if file is uploaded
-    if (req.file) {
-        newListing.image = {
-            url: req.file.path,
-            filename: req.file.filename
-        };
-    }
+    // newListing.image = { url, filename };
 
     await newListing.save();
     req.flash("success", "New Listing Created!");
     res.redirect("/listings");
 };
+
 
 
 
